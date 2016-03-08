@@ -18,7 +18,6 @@ target_include_directories(CoMISo PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/.."
   "${CMAKE_CURRENT_SOURCE_DIR}/../nanogui/ext/eigen"
   "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
-target_compile_options(CoMISo PRIVATE -Wno-deprecated-declarations)
 target_compile_definitions(CoMISo PRIVATE -DINCLUDE_TEMPLATES)
 if (WIN32)
   target_compile_definitions(CoMISo PRIVATE -D_USE_MATH_DEFINES -DNOMINMAX)
