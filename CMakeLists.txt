@@ -14,11 +14,21 @@ add_library(CoMISo STATIC
   Solver/IterativeSolverT.hh Solver/IterativeSolverT.cc
   Solver/GMM_Tools.hh Solver/GMM_Tools.cc)
 
-target_include_directories(CoMISo PRIVATE
+target_include_directories(CoMISo PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/.."
   "${CMAKE_CURRENT_SOURCE_DIR}/../nanogui/ext/eigen"
   "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
-target_compile_definitions(CoMISo PRIVATE -DINCLUDE_TEMPLATES)
+target_compile_definitions(CoMISo PUBLIC -DINCLUDE_TEMPLATES)
+
 if (WIN32)
   target_compile_definitions(CoMISo PRIVATE -D_USE_MATH_DEFINES -DNOMINMAX)
+  target_compile_options(CoMISo PUBLIC /D_SCL_SECURE_NO_DEPRECATE)
 endif(WIN32)
+
+if(APPLE)
+  find_library(accelerate_library Accelerate)
+  target_link_libraries(CoMISo PUBLIC ${accelerate_library})
+elseif(UNIX)
+  find_package(BLAS REQUIRED)
+  target_link_libraries(CoMISo PUBLIC ${BLAS_LIBRARIES})
+endif()
