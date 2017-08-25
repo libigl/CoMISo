@@ -26,7 +26,7 @@ if(WIN32)
   add_library(CoMISo_blas STATIC IMPORTED)
   set_target_properties(CoMISo_blas PROPERTIES
       IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-      IMPORTED_LOCATION "ext/OpenBLAS-v0.2.14-Win64-int64/lib/libopenblas.dll.a.lib")
+      IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/ext/OpenBLAS-v0.2.14-Win64-int64/lib/libopenblas.dll.a.lib")
   target_link_libraries(CoMISo PRIVATE CoMISo_blas)
 endif()
 
