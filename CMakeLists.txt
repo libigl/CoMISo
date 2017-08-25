@@ -20,10 +20,15 @@ target_include_directories(CoMISo PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
 target_compile_definitions(CoMISo PUBLIC -DINCLUDE_TEMPLATES)
 
-if (WIN32)
+if(WIN32)
   target_compile_definitions(CoMISo PRIVATE -D_USE_MATH_DEFINES -DNOMINMAX)
   target_compile_options(CoMISo PUBLIC /D_SCL_SECURE_NO_DEPRECATE)
-endif(WIN32)
+  add_library(CoMISo_blas STATIC IMPORTED)
+  set_target_properties(CoMISo_blas PROPERTIES
+      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+      IMPORTED_LOCATION "ext/OpenBLAS-v0.2.14-Win64-int64/lib/libopenblas.dll.a.lib")
+  target_link_libraries(CoMISo PRIVATE CoMISo_blas)
+endif()
 
 if(APPLE)
   find_library(accelerate_library Accelerate)
