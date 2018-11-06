@@ -34,7 +34,7 @@ namespace COMISO {
 
   EigenLDLTSolver::EigenLDLTSolver() : n_(0)
 {
-
+  show_timings_ = false;
 }
 
 
