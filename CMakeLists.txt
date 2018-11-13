@@ -20,6 +20,9 @@ target_include_directories(CoMISo PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
 target_compile_definitions(CoMISo PUBLIC -DINCLUDE_TEMPLATES)
 
+# Generate position independent code
+set_target_properties(CoMISo PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 if(WIN32)
   target_compile_definitions(CoMISo PRIVATE -D_USE_MATH_DEFINES -DNOMINMAX)
   target_compile_options(CoMISo PUBLIC /D_SCL_SECURE_NO_DEPRECATE)
