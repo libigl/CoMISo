@@ -20,6 +20,11 @@ target_include_directories(CoMISo PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
 target_compile_definitions(CoMISo PUBLIC -DINCLUDE_TEMPLATES)
 
+if(TARGET Eigen3::Eigen)
+  # If an imported target already exists, use it
+  target_link_libraries(CoMISo PUBLIC Eigen3::Eigen)
+endif()
+
 # Generate position independent code
 set_target_properties(CoMISo PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
