@@ -192,7 +192,7 @@ public:
 
   template<class RMatrixT, class VectorIT >
   void make_constraints_independent_reordering(
-      RMatrixT&         _constraints,
+            RMatrixT&         _constraints,
 			VectorIT&         _idx_to_round,
 			std::vector<int>& _c_elim );
 
@@ -231,14 +231,14 @@ public:
  
   template<class SVector1T, class SVector2T, class VectorIT, class CSCMatrixT>
   void eliminate_constraints(
-      gmm::row_matrix<SVector1T>& _constraints,
-      gmm::col_matrix<SVector2T>& _A, 
-      std::vector<double>&        _x, 
-      std::vector<double>&        _rhs, 
-      VectorIT&                   _idx_to_round,
-      std::vector<int>&           _c_elim,
-      std::vector<int>&           _new_idx,
-      CSCMatrixT&                 _Acsc);
+      gmm::row_matrix<SVector1T>&   _constraints,
+      gmm::col_matrix<SVector2T>&   _A,
+      std::vector<double>&          _x,
+      std::vector<double>&          _rhs,
+      VectorIT&                     _idx_to_round,
+      std::vector<int>&  _c_elim,
+      std::vector<int>&             _new_idx,
+      CSCMatrixT&                   _Acsc);
 
 /// Restore a solution vector to the un-eliminated size
 /**  
@@ -371,8 +371,7 @@ private:
 
     void append(int _i, double _f, int _j, bool _flag)
     {
-//      std::cerr << "append " << _i << ", " << _j << ", " << _f << ", " << int(_flag) << std::endl;
-      table_.push_back(rhsUpdateTableEntry(_i, _j, _f, _flag));
+      table_.emplace_back(_i, _j, _f, _flag);
     }
     void add_elim_id(int _i) { elim_var_ids_.push_back(_i); }
     void clear() { table_.clear(); elim_var_ids_.clear(); }
@@ -401,9 +400,9 @@ private:
       std::sort( evar.begin(), evar.end() );
       evar.push_back( std::numeric_limits<int>::max() );
 
-      int cur_evar_idx=0;
-      unsigned int nc = _rhs.size();
-      for( unsigned int i=0; i<nc; ++i )
+      int cur_evar_idx = 0;
+      size_t nc = _rhs.size();
+      for( unsigned int i = 0; i < nc; ++i )
       {
         unsigned int next_i = evar[cur_evar_idx];
 

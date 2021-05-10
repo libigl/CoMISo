@@ -17,7 +17,7 @@ add_library(CoMISo STATIC
 target_include_directories(CoMISo PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/.."
   "${CMAKE_CURRENT_SOURCE_DIR}/../eigen"
-  "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-4.2/include")
+  "${CMAKE_CURRENT_SOURCE_DIR}/ext/gmm-5.3/include")
 target_compile_definitions(CoMISo PUBLIC -DINCLUDE_TEMPLATES)
 
 target_link_libraries(CoMISo PUBLIC Eigen3::Eigen)
