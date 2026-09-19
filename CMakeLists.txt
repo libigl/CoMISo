@@ -34,11 +34,20 @@ set_target_properties(CoMISo PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(WIN32)
   target_compile_definitions(CoMISo PRIVATE -D_USE_MATH_DEFINES -DNOMINMAX)
   target_compile_options(CoMISo PUBLIC /D_SCL_SECURE_NO_DEPRECATE)
-  add_library(CoMISo_blas STATIC IMPORTED)
-  set_target_properties(CoMISo_blas PROPERTIES
-      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-      IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/ext/OpenBLAS-v0.2.14-Win64-int64/lib/libopenblas.dll.a.lib")
-  target_link_libraries(CoMISo PRIVATE CoMISo_blas)
+  # Deliberately do NOT link the OpenBLAS copy vendored under
+  # ext/OpenBLAS-v0.2.14-Win64-int64: it is an INTERFACE64 (-i8) build whose Fortran
+  # INTEGER is 64-bit, while gmm's BLAS/LAPACK interface (enabled by GMM_USES_LAPACK in
+  # Solver/GMM_Tools.cc) declares and calls every routine with 32-bit ints. Handing the
+  # address of a 32-bit int to a routine that reads 64 bits is undefined behaviour: the
+  # routine reads the neighbouring stack, so lengths and increments become garbage and
+  # BLAS runs out of bounds. It surfaces as a SIGSEGV that depends on the optimization
+  # level -- the MIQ pipeline hits it on its first gmm::vect_sp. COMISO_NO_BLAS compiles
+  # the interface out instead, letting gmm use its own implementations; it is PUBLIC
+  # because GMM_Tools.cc is textually included by consumers (INCLUDE_TEMPLATES), so they
+  # have to see the same setting, and because without it those consumers would reference
+  # BLAS symbols nothing provides. Re-enable BLAS by pointing at a 32-bit-integer build
+  # (and then shipping its runtime DLLs alongside the executables).
+  target_compile_definitions(CoMISo PUBLIC -DCOMISO_NO_BLAS)
 endif()
 
 if(APPLE)

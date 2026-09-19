@@ -35,8 +35,19 @@
 //== INCLUDES =================================================================
 
 #include "GMM_Tools.hh"
-#define GMM_USES_LAPACK
-#include <gmm/gmm_lapack_interface.h>
+/* gmm's BLAS/LAPACK interface declares and calls every Fortran routine with 32-bit
+   INTEGER arguments, which is only correct for a BLAS built with 32-bit integers (the
+   usual default, and what Accelerate and the reference BLAS use). The OpenBLAS copy
+   vendored under ext/ for Windows is an INTERFACE64 (-i8) build instead, so its routines
+   read 64 bits at each argument address while gmm passes the address of a 32-bit int:
+   the routine picks up the neighbouring stack, the vector length and the increments
+   become garbage, and BLAS walks out of bounds. Builds therefore link gmm to a matching
+   BLAS or to none at all, never to a mismatched one -- CoMISo's CMakeLists.txt defines
+   COMISO_NO_BLAS on Windows for exactly that reason, compiling the interface out. */
+#if !defined(COMISO_NO_BLAS)
+#  define GMM_USES_LAPACK
+#  include <gmm/gmm_lapack_interface.h>
+#endif
 #include <queue>
 #include <CoMISo/Utils/StopWatch.hh>
 #include <CoMISo/Utils/VSToolsT.hh>

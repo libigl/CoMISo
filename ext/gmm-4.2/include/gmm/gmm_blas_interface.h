@@ -149,15 +149,26 @@ namespace gmm {
   /* BLAS functions used.                                                  */
   /* ********************************************************************* */
   extern "C" void daxpy_(const int *n, const double *alpha, const double *x, const int *incx, double *y, const int *incy);
+  /* Every BLAS routine is a Fortran procedure, so all its arguments are passed
+     by address, and it reads them from the argument registers. A "..." (no
+     prototype) declaration makes the C++ compiler treat the call as variadic
+     instead: under the Apple arm64 ABI that puts every argument on the stack,
+     leaving the registers with garbage that libBLAS then dereferences (SIGSEGV
+     in ddot_, reproduced by the MIQ pipeline on its first gmm::vect_sp).
+     The level-1 routines below are therefore declared with real prototypes;
+     daxpy_ above already had one for the same reason. */
   extern "C" {
     void sgemm_(...); void dgemm_(...); void cgemm_(...); void zgemm_(...);
     void sgemv_(...); void dgemv_(...); void cgemv_(...); void zgemv_(...);
     void strsv_(...); void dtrsv_(...); void ctrsv_(...); void ztrsv_(...);
-    void saxpy_(...); /*void daxpy_(...); */void caxpy_(...); void zaxpy_(...);
-    BLAS_S sdot_ (...); BLAS_D ddot_ (...);
+    void saxpy_(const int*, const BLAS_S*, const BLAS_S*, const int*, BLAS_S*, const int*);
+    /*void daxpy_(...); */void caxpy_(...); void zaxpy_(...);
+    BLAS_S sdot_ (const int*, const BLAS_S*, const int*, const BLAS_S*, const int*);
+    BLAS_D ddot_ (const int*, const BLAS_D*, const int*, const BLAS_D*, const int*);
     BLAS_C cdotu_(...); BLAS_Z zdotu_(...);
     BLAS_C cdotc_(...); BLAS_Z zdotc_(...);
-    BLAS_S snrm2_(...); BLAS_D dnrm2_(...);
+    BLAS_S snrm2_(const int*, const BLAS_S*, const int*);
+    BLAS_D dnrm2_(const int*, const BLAS_D*, const int*);
     BLAS_S scnrm2_(...); BLAS_D dznrm2_(...);
     void  sger_(...); void  dger_(...); void  cgerc_(...); void  zgerc_(...); 
   }
